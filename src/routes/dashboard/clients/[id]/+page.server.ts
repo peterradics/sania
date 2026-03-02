@@ -20,17 +20,34 @@ const clientSchema = z.object({
 	birth_date: z.string().optional()
 });
 
+const moneySchema = z.object({
+	value: z
+		.string()
+		.min(1, 'Value is required')
+		.transform((v) => Number(v))
+		.pipe(z.number({ invalid_type_error: 'Value must be a number' })),
+	type: z.enum(['deposit', 'withdraw'], { required_error: 'Type is required' }),
+	endofterm: z.string().optional()
+	//parent: z.string().optional()
+});
+
 export const load: PageServerLoad = async ({ params, locals }) => {
 	try {
-		const client = await locals.pb.collection('clients').getOne(params.id);
-		return { client };
+		const [client, moneyEntries] = await Promise.all([
+			locals.pb.collection('clients').getOne(params.id),
+			locals.pb.collection('money').getFullList({
+				filter: `client = "${params.id}"`,
+				sort: '-created'
+			})
+		]);
+		return { client, moneyEntries };
 	} catch {
 		error(404, 'Client not found');
 	}
 };
 
 export const actions: Actions = {
-	default: async ({ params, request, locals }) => {
+	updateClient: async ({ params, request, locals }) => {
 		const formData = await request.formData();
 
 		const raw = {
@@ -55,7 +72,7 @@ export const actions: Actions = {
 				const field = issue.path[0] as string;
 				errors[field] = issue.message;
 			}
-			return fail(422, { errors, values: raw });
+			return fail(422, { _action: 'updateClient', errors, values: raw });
 		}
 
 		const data = result.data;
@@ -72,9 +89,55 @@ export const actions: Actions = {
 		} catch (err: unknown) {
 			const message =
 				err instanceof Error ? err.message : 'Failed to update client. Please try again.';
-			return fail(500, { serverError: message, values: raw });
+			return fail(500, { _action: 'updateClient', serverError: message, values: raw });
 		}
 
-		return { success: true, values: raw };
+		return { _action: 'updateClient' as const, success: true, values: raw };
+	},
+
+	createMoney: async ({ params, request, locals }) => {
+		const formData = await request.formData();
+
+		const rawMoney = {
+			value: formData.get('value') as string,
+			type: formData.get('type') as string,
+			endofterm: formData.get('endofterm') as string,
+			parent: formData.get('parent') as string
+		};
+
+		const result = moneySchema.safeParse(rawMoney);
+
+		if (!result.success) {
+			const moneyErrors: Record<string, string> = {};
+			for (const issue of result.error.issues) {
+				const field = issue.path[0] as string;
+				moneyErrors[field] = issue.message;
+			}
+			return fail(422, { _action: 'createMoney', moneyErrors, moneyValues: rawMoney });
+		}
+
+		const moneyData = result.data;
+
+		const payload: Record<string, unknown> = {
+			client: params.id,
+			value: moneyData.value,
+			type: moneyData.type
+		};
+		if (moneyData.endofterm) payload.endofterm = moneyData.endofterm;
+		if (moneyData.type === 'withdraw' && moneyData.parent) payload.parent = moneyData.parent;
+
+		try {
+			await locals.pb.collection('money').create(payload);
+		} catch (err: unknown) {
+			const message =
+				err instanceof Error ? err.message : 'Failed to create money entry. Please try again.';
+			return fail(500, {
+				_action: 'createMoney',
+				moneyServerError: message,
+				moneyValues: rawMoney
+			});
+		}
+
+		return { _action: 'createMoney' as const, success: true };
 	}
 };

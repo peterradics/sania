@@ -3,6 +3,10 @@
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
+
+	function formatMoney(v: number): string {
+		return v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+	}
 </script>
 
 <div class="mx-auto max-w-4xl py-6">
@@ -20,16 +24,21 @@
 					<tr class="bg-muted/50 border-b">
 						<th class="px-4 py-3 text-left font-medium">System ID</th>
 						<th class="px-4 py-3 text-left font-medium">Name</th>
+						<th class="px-4 py-3 text-right font-medium">Balance</th>
 					</tr>
 				</thead>
 				<tbody>
 					{#each data.clients as client}
+						{@const balance = data.balanceByClient[client.id] ?? 0}
 						<tr
 							class="hover:bg-muted/40 cursor-pointer border-b last:border-0 transition-colors"
 							onclick={() => goto(`/dashboard/clients/${client.id}`)}
 						>
 							<td class="px-4 py-3 tabular-nums">{client.system_id ?? '—'}</td>
 							<td class="px-4 py-3">{client.name_first} {client.name_last}</td>
+							<td class="px-4 py-3 text-right tabular-nums {balance >= 0 ? 'text-green-700' : 'text-red-700'} font-medium">
+								{formatMoney(balance)}
+							</td>
 						</tr>
 					{/each}
 				</tbody>
