@@ -6,3 +6,6 @@
 - all routes should be protected but login
 - setup hooks.server.ts to protect routes
 - use cookie authentication
+- create a logout route
+- after successful logout, redirect to login page
+- after successful login, redirect to dashboard

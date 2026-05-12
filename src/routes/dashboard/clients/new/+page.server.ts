@@ -1,6 +1,18 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
-import type { Actions } from './$types';
+import type { PageServerLoad, Actions } from './$types';
+
+export const load: PageServerLoad = async ({ locals }) => {
+	const clients = await locals.pb.collection('clients').getFullList({
+		fields: 'system_id'
+	});
+
+	const maxId = (clients as Array<{ system_id: number | null }>)
+		.map((c) => c.system_id ?? 0)
+		.reduce((max, v) => Math.max(max, v), 0);
+
+	return { maxSystemId: maxId };
+};
 
 const clientSchema = z.object({
 	name_first: z.string().min(1, 'First name is required'),
@@ -35,7 +47,8 @@ export const actions: Actions = {
 			address_city: formData.get('address_city') as string,
 			address_country: formData.get('address_country') as string,
 			birth_place: formData.get('birth_place') as string,
-			birth_date: formData.get('birth_date') as string
+			birth_date: formData.get('birth_date') as string,
+			password: formData.get('password') as string
 		};
 
 		const result = clientSchema.safeParse(raw);
@@ -46,6 +59,7 @@ export const actions: Actions = {
 				const field = issue.path[0] as string;
 				errors[field] = issue.message;
 			}
+			console.log(errors);
 			return fail(422, { errors, values: raw });
 		}
 
@@ -59,11 +73,34 @@ export const actions: Actions = {
 			}
 		}
 
+		let theNewCLient: RecordModel;
+
 		try {
-			await locals.pb.collection('clients').create(payload);
+			theNewCLient = await locals.pb.collection('clients').create(payload);
 		} catch (err: unknown) {
+			console.log(err);
 			const message =
 				err instanceof Error ? err.message : 'Failed to create client. Please try again.';
+			return fail(500, { serverError: message, values: raw });
+		}
+
+		try {
+			console.log(theNewCLient);
+			// create user
+			const userData = {
+				email: theNewCLient.email,
+				emailVisibility: false,
+				name: theNewCLient.name_first + ' ' + theNewCLient.name_last,
+				system_id: theNewCLient.system_id,
+				client: theNewCLient.id,
+				password: raw.password,
+				passwordConfirm: raw.password
+			};
+			await locals.pb.collection('users').create(userData);
+		} catch (err: unknown) {
+			console.log(err);
+			const message =
+				err instanceof Error ? err.message : 'Failed to create user. Please try again.';
 			return fail(500, { serverError: message, values: raw });
 		}
 

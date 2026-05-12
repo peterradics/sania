@@ -1,16 +1,20 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import type { ActionData } from './$types';
+	import type { ActionData, PageData } from './$types';
+	import { passwordGen } from '$lib/utils.js';
 
-	let { form }: { form: ActionData } = $props();
+	let { data, form }: { data: PageData; form: ActionData } = $props();
 
 	let isLoading = $state(false);
+	let password = $state('');
+	let suggestedSystemId = $state('');
 
 	$effect(() => {
 		if (form?.serverError) {
@@ -21,7 +25,13 @@
 	function handleSubmit() {
 		return ({ cancel }: { cancel: () => void }) => {
 			isLoading = true;
-			return async ({ result, update }: { result: { type: string }; update: () => Promise<void> }) => {
+			return async ({
+				result,
+				update
+			}: {
+				result: { type: string };
+				update: () => Promise<void>;
+			}) => {
 				isLoading = false;
 				if (result.type === 'redirect') {
 					toast.success('Client created successfully!');
@@ -36,12 +46,20 @@
 	type FormValues = Record<string, string | undefined>;
 	const values = $derived((form?.values ?? {}) as FormValues);
 	const errors = $derived((form?.errors ?? {}) as Record<string, string | undefined>);
+
+	onMount(() => {
+		password = values.password ?? passwordGen();
+		if (!values.system_id) {
+			const rand = Math.floor(Math.random() * 9) + 1;
+			suggestedSystemId = String(data.maxSystemId + rand);
+		}
+	});
 </script>
 
-<div class="mx-auto max-w-3xl py-6">
+<div class="mx-auto max-w-4xl px-4 py-6">
 	<div class="mb-6">
 		<h1 class="text-2xl font-bold">New Client</h1>
-		<p class="text-muted-foreground text-sm">Fill in the details to create a new client.</p>
+		<p class="text-sm text-muted-foreground">Fill in the details to create a new client.</p>
 	</div>
 
 	<form method="POST" use:enhance={handleSubmit()}>
@@ -61,7 +79,7 @@
 						aria-invalid={!!errors.name_first}
 					/>
 					{#if errors.name_first}
-						<p class="text-destructive text-xs">{errors.name_first}</p>
+						<p class="text-xs text-destructive">{errors.name_first}</p>
 					{/if}
 				</div>
 
@@ -76,7 +94,7 @@
 						aria-invalid={!!errors.name_last}
 					/>
 					{#if errors.name_last}
-						<p class="text-destructive text-xs">{errors.name_last}</p>
+						<p class="text-xs text-destructive">{errors.name_last}</p>
 					{/if}
 				</div>
 
@@ -92,7 +110,7 @@
 						aria-invalid={!!errors.email}
 					/>
 					{#if errors.email}
-						<p class="text-destructive text-xs">{errors.email}</p>
+						<p class="text-xs text-destructive">{errors.email}</p>
 					{/if}
 				</div>
 
@@ -110,33 +128,6 @@
 
 				<!-- System ID -->
 				<div class="flex flex-col gap-1.5">
-					<Label for="system_id">System ID</Label>
-					<Input
-						id="system_id"
-						name="system_id"
-						type="number"
-						placeholder="12345"
-						value={values.system_id ?? ''}
-						aria-invalid={!!errors.system_id}
-					/>
-					{#if errors.system_id}
-						<p class="text-destructive text-xs">{errors.system_id}</p>
-					{/if}
-				</div>
-
-				<!-- Birth Date -->
-				<div class="flex flex-col gap-1.5">
-					<Label for="birth_date">Birth Date</Label>
-					<Input
-						id="birth_date"
-						name="birth_date"
-						type="date"
-						value={values.birth_date ?? ''}
-					/>
-				</div>
-
-				<!-- Birth Place -->
-				<div class="col-span-full flex flex-col gap-1.5">
 					<Label for="birth_place">Birth Place</Label>
 					<Input
 						id="birth_place"
@@ -144,6 +135,46 @@
 						placeholder="City, Country"
 						value={values.birth_place ?? ''}
 					/>
+				</div>
+
+				<!-- Birth Date -->
+				<div class="flex flex-col gap-1.5">
+					<Label for="birth_date">Birth Date</Label>
+					<Input id="birth_date" name="birth_date" type="date" value={values.birth_date ?? ''} />
+				</div>
+
+				<!-- Birth Place -->
+				<div class="flex flex-col gap-1.5">
+					<Label for="system_id">System ID</Label>
+					<Input
+						id="system_id"
+						name="system_id"
+						type="number"
+						placeholder="12345"
+						value={values.system_id ?? suggestedSystemId}
+						aria-invalid={!!errors.system_id}
+					/>
+					{#if errors.system_id}
+						<p class="text-xs text-destructive">{errors.system_id}</p>
+					{/if}
+				</div>
+
+				<div class="flex flex-col gap-1.5">
+					<Label for="password">Password</Label>
+					<Input
+						id="password"
+						name="password"
+						type="text"
+						placeholder="Password"
+						bind:value={password}
+						aria-invalid={!!errors.password}
+					/>
+					<Button variant="outline" type="button" onclick={() => (password = passwordGen())}>
+						Generate Password
+					</Button>
+					{#if errors.password}
+						<p class="text-xs text-destructive">{errors.password}</p>
+					{/if}
 				</div>
 			</Card.Content>
 		</Card.Root>

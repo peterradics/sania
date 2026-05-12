@@ -6,6 +6,7 @@
 	import MapIcon from '@lucide/svelte/icons/map';
 	import Settings2Icon from '@lucide/svelte/icons/settings-2';
 	import ClientsIcon from '@lucide/svelte/icons/users';
+	import DashboardIcon from '@lucide/svelte/icons/layout-dashboard';
 	import PortfoliosIcon from '@lucide/svelte/icons/chart-bar';
 
 	// This is sample data.
@@ -17,6 +18,11 @@
 		},
 		navMain: [
 			{
+				title: 'Dashboard',
+				url: '/dashboard',
+				icon: DashboardIcon
+			},
+			{
 				title: 'Clients',
 				url: '#',
 				icon: ClientsIcon,
@@ -24,15 +30,15 @@
 				items: [
 					{
 						title: 'New Client',
-						url: '#'
+						url: '/dashboard/clients/new'
 					},
 					{
 						title: 'Client List',
-						url: '/dashboard/clients'
+						url: '/dashboard/clients/list'
 					}
 				]
-			},
-			{
+			}
+			/*	{
 				title: 'Portfolios',
 				url: '#',
 				icon: PortfoliosIcon,
@@ -50,7 +56,7 @@
 						url: '#'
 					}
 				]
-			}
+			} */
 		]
 	};
 </script>
@@ -72,7 +78,7 @@
 
 <Sidebar.Root {collapsible} {...restProps}>
 	<Sidebar.Header>
-		<img src="/sania-logo.png" alt="Sania power" class="rounded-sm" />
+		<img src="/sania-logo.png" alt="Sania power" class="w-full rounded-sm" />
 	</Sidebar.Header>
 	<Sidebar.Content>
 		<NavMain items={data.navMain} />

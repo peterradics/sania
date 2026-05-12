@@ -10,19 +10,21 @@ export const actions: Actions = {
 		const pb = createPocketBase();
 
 		try {
-			const auth = await pb.collection('users').authWithPassword(email, password);
+			const auth = await pb.collection('_superusers').authWithPassword(email, password);
+
+			console.log(auth);
 
 			cookies.set('pb_auth', JSON.stringify({ token: auth.token, record: auth.record }), {
 				path: '/',
 				httpOnly: true,
-				sameSite: 'lax',
+				sameSite: 'strict',
 				secure: process.env.NODE_ENV === 'production',
-				maxAge: 60 * 60 * 24 * 30 // 30 days
+				maxAge: 60 * 60 * 24 * 1 // 1 day
 			});
 		} catch {
 			return fail(400, { error: 'Invalid email or password' });
 		}
 
-		redirect(303, '/dashboard');
+		redirect(303, '/dashboard/clients');
 	}
 };

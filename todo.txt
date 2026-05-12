@@ -1,0 +1,3 @@
+Kezdő dátum,
+kezdő összeg
+Az aktuális balance

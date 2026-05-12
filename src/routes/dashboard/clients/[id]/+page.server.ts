@@ -26,9 +26,10 @@ const moneySchema = z.object({
 		.min(1, 'Value is required')
 		.transform((v) => Number(v))
 		.pipe(z.number({ invalid_type_error: 'Value must be a number' })),
-	type: z.enum(['deposit', 'withdraw'], { required_error: 'Type is required' }),
-	endofterm: z.string().optional()
-	//parent: z.string().optional()
+	type: z.enum(['deposit', 'withdraw', 'interest'], { required_error: 'Type is required' }),
+	endofterm: z.string().optional(),
+	startofterm: z.string().optional(),
+	parent: z.string().optional()
 });
 
 export const load: PageServerLoad = async ({ params, locals }) => {
@@ -37,6 +38,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 			locals.pb.collection('clients').getOne(params.id),
 			locals.pb.collection('money').getFullList({
 				filter: `client = "${params.id}"`,
+				expand: 'parentMoneyItem',
 				sort: '-created'
 			})
 		]);
@@ -95,14 +97,32 @@ export const actions: Actions = {
 		return { _action: 'updateClient' as const, success: true, values: raw };
 	},
 
+	deleteMoney: async ({ request, locals }) => {
+		const formData = await request.formData();
+		const id = formData.get('id') as string;
+
+		if (!id) return fail(400, { _action: 'deleteMoney', serverError: 'Missing entry ID.' });
+
+		try {
+			await locals.pb.collection('money').delete(id);
+		} catch (err: unknown) {
+			const message =
+				err instanceof Error ? err.message : 'Failed to delete entry. Please try again.';
+			return fail(500, { _action: 'deleteMoney', serverError: message });
+		}
+
+		return { _action: 'deleteMoney' as const, success: true };
+	},
+
 	createMoney: async ({ params, request, locals }) => {
 		const formData = await request.formData();
 
 		const rawMoney = {
 			value: formData.get('value') as string,
 			type: formData.get('type') as string,
-			endofterm: formData.get('endofterm') as string,
-			parent: formData.get('parent') as string
+			endofterm: formData.get('endofterm') ?? undefined,
+			startofterm: formData.get('startofterm') ?? undefined,
+			parent: formData.get('parent') ?? undefined
 		};
 
 		const result = moneySchema.safeParse(rawMoney);
@@ -124,7 +144,10 @@ export const actions: Actions = {
 			type: moneyData.type
 		};
 		if (moneyData.endofterm) payload.endofterm = moneyData.endofterm;
-		if (moneyData.type === 'withdraw' && moneyData.parent) payload.parent = moneyData.parent;
+		if (moneyData.startofterm) payload.startofterm = moneyData.startofterm;
+
+		if ((moneyData.type === 'withdraw' || moneyData.type === 'interest') && moneyData.parent)
+			payload.parentMoneyItem = moneyData.parent;
 
 		try {
 			await locals.pb.collection('money').create(payload);

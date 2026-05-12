@@ -15,14 +15,14 @@ export const handle: Handle = async ({ event, resolve }) => {
 			// Refresh token if valid
 			if (pb.authStore.isValid) {
 				try {
-					await pb.collection('users').authRefresh();
+					await pb.collection('_superusers').authRefresh();
 					event.cookies.set(
 						'pb_auth',
 						JSON.stringify({ token: pb.authStore.token, record: pb.authStore.record }),
 						{
 							path: '/',
 							httpOnly: true,
-							sameSite: 'lax',
+							sameSite: 'strict',
 							secure: process.env.NODE_ENV === 'production',
 							maxAge: 60 * 60 * 24 * 30
 						}
@@ -41,7 +41,11 @@ export const handle: Handle = async ({ event, resolve }) => {
 	event.locals.user = pb.authStore.isValid ? pb.authStore.record : null;
 
 	// Protect all routes except /login and /logout
-	if (!event.locals.user && !event.url.pathname.startsWith('/login') && !event.url.pathname.startsWith('/logout')) {
+	if (
+		!event.locals.user &&
+		!event.url.pathname.startsWith('/login') &&
+		!event.url.pathname.startsWith('/logout')
+	) {
 		redirect(303, '/login');
 	}
 

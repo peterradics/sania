@@ -1,7 +1,5 @@
 <script lang="ts">
 	import AppSidebar from '$lib/components/app-sidebar.svelte';
-	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
-	import { Separator } from '$lib/components/ui/separator/index.js';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 
 	let { children } = $props();
@@ -10,7 +8,15 @@
 <Sidebar.Provider>
 	<AppSidebar />
 	<Sidebar.Inset>
-		<div class="p-8">
+		<!-- Mobile-only top bar -->
+		<header
+			class="sticky top-0 z-20 flex h-12 items-center gap-2 border-b bg-background px-4 md:hidden"
+		>
+			<Sidebar.Trigger />
+			<span class="text-sm font-semibold">Sania</span>
+		</header>
+
+		<div class="p-4 sm:p-8">
 			{@render children()}
 		</div>
 	</Sidebar.Inset>
