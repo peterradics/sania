@@ -20,6 +20,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 		value: number;
 		type: string;
 		startofterm: string;
+		endofterm: string;
 	}>) {
 		if (!entry.client) continue;
 		if (!balanceByClient[entry.client]) balanceByClient[entry.client] = 0;
