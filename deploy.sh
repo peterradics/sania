@@ -3,12 +3,12 @@ npm run build
 #copy package to build folder
 cp package.json package-lock.json build/
 
-ssh -i ~/office/hetzner/sania.pem root@188.245.235.148 "rm -rf ~/sania/*"
+ssh -i ~/office/hetzner/sania.key root@188.245.235.148 "rm -rf ~/account/*"
 
-scp -r -i ~/office/hetzner/sania.pem ./build root@188.245.235.148:~/sania/
-scp -i ~/office/hetzner/sania.pem Dockerfile root@188.245.235.148:~/sania/
+scp -r -i ~/office/hetzner/sania.key ./build root@188.245.235.148:~/account/
+scp -i ~/office/hetzner/sania.key Dockerfile root@188.245.235.148:~/account/
 
-ssh -i ~/office/hetzner/sania.pem root@188.245.235.148 "cd sania;podman build -t sania .;podman kill equ;podman container rm equ;podman run -d -p 3300:3300 --name equ sania"
+ssh -i ~/office/hetzner/sania.key root@188.245.235.148 "cd account;podman build -t account .;podman kill acc;podman container rm acc;podman run -d -p 3200:3200 --name acc account"
 
 # podman build -t sania .
 # podman save equitrack | gzip > equitrack.tar.gz

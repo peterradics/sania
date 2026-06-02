@@ -10,8 +10,8 @@ COPY build/ .
 RUN npm install
 
 
-EXPOSE 3300
-ENV PORT=3300
+EXPOSE 3200
+ENV PORT=3200
 ENV BODY_SIZE_LIMIT=Infinity
 ENV ORIGIN=https://account.partnerportal.me
 CMD ["node","index.js"]
