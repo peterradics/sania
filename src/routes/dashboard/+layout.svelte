@@ -16,7 +16,7 @@
 			<span class="text-sm font-semibold">Sania</span>
 		</header>
 
-		<div class="p-4 sm:p-8">
+		<div class="w-full min-w-0 p-4 sm:p-8">
 			{@render children()}
 		</div>
 	</Sidebar.Inset>
