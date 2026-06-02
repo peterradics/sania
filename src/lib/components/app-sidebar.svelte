@@ -19,8 +19,13 @@
 		navMain: [
 			{
 				title: 'Irányítópult',
-				url: '/dashboard',
-				icon: DashboardIcon
+				url: '#',
+				icon: DashboardIcon,
+				isActive: true,
+				items: [
+					{ title: 'Főoldal', url: '/dashboard' },
+					{ title: 'Elszámolás', url: '/dashboard/calculation' }
+				]
 			},
 			{
 				title: 'Ügyfelek',
