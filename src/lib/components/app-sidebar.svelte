@@ -18,22 +18,22 @@
 		},
 		navMain: [
 			{
-				title: 'Dashboard',
+				title: 'Irányítópult',
 				url: '/dashboard',
 				icon: DashboardIcon
 			},
 			{
-				title: 'Clients',
+				title: 'Ügyfelek',
 				url: '#',
 				icon: ClientsIcon,
 				isActive: true,
 				items: [
 					{
-						title: 'New Client',
+						title: 'Új ügyfél',
 						url: '/dashboard/clients/new'
 					},
 					{
-						title: 'Client List',
+						title: 'Ügyféllista',
 						url: '/dashboard/clients/list'
 					}
 				]

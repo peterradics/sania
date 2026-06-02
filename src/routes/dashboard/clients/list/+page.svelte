@@ -62,11 +62,13 @@
 <div class="mx-auto max-w-4xl py-6">
 	<div class="mb-6 flex flex-wrap items-end justify-between gap-4">
 		<div>
-			<h1 class="text-2xl font-bold">Clients</h1>
-			<p class="text-sm text-muted-foreground">Click a client to view and edit their details.</p>
+			<h1 class="text-2xl font-bold">Ügyfelek</h1>
+			<p class="text-sm text-muted-foreground">
+				Kattintson egy ügyfélre az adatok megtekintéséhez és szerkesztéséhez.
+			</p>
 		</div>
 		<div class="text-right">
-			<p class="text-xs tracking-wide text-muted-foreground uppercase">Total EUR</p>
+			<p class="text-xs tracking-wide text-muted-foreground uppercase">Összes kezelt vagyon</p>
 			<p
 				class="text-2xl font-semibold tabular-nums {totalBalance >= 0
 					? 'text-green-700'
@@ -75,13 +77,13 @@
 				{formatMoney(totalBalance)}
 			</p>
 			<p class="text-xs text-muted-foreground">
-				{clientCount} client{clientCount === 1 ? '' : 's'}
+				{clientCount} ügyfél
 			</p>
 		</div>
 	</div>
 
 	{#if data.clients.length === 0}
-		<p class="text-muted-foreground">No clients found.</p>
+		<p class="text-muted-foreground">Nincsenek ügyfelek.</p>
 	{:else}
 		<div class="overflow-x-auto rounded-md border">
 			<table class="w-full text-sm">
@@ -98,11 +100,11 @@
 								{label}{sortKey === key ? (sortDir === 'asc' ? ' ↑' : ' ↓') : ''}
 							</th>
 						{/snippet}
-						{@render th('system_id', 'System ID')}
-						{@render th('name', 'Name')}
-						{@render th('balance', 'Balance', 'right')}
-						{@render th('first_deposit', '1st Deposit', 'right')}
-						{@render th('first_deposit_date', '1st Deposit Date', 'right')}
+						{@render th('system_id', 'Azonosító')}
+						{@render th('name', 'Név')}
+						{@render th('balance', 'Egyenleg', 'right')}
+						{@render th('first_deposit', '1. Befizetés', 'right')}
+						{@render th('first_deposit_date', '1. Befizetés dátuma', 'right')}
 					</tr>
 				</thead>
 				<tbody>

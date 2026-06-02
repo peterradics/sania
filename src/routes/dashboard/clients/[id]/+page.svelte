@@ -27,17 +27,17 @@
 		if (!form) return;
 		if (form._action === 'updateClient') {
 			if (form.serverError) toast.error(form.serverError as string);
-			if (form.success) toast.success('Client saved successfully!');
+			if (form.success) toast.success('Az ügyfél sikeresen mentve!');
 		}
 		if (form._action === 'createMoney') {
 			if (form.moneyServerError) toast.error(form.moneyServerError as string);
-			if (form.success) toast.success('Money entry added successfully!');
+			if (form.success) toast.success('A pénzügyi tétel sikeresen hozzáadva!');
 		}
 		if (form._action === 'deleteMoney') {
 			if (form.serverError) toast.error(form.serverError as string);
 			if (form.success) {
 				deleteTarget = null;
-				toast.success('Entry deleted.');
+				toast.success('Tétel törölve.');
 			}
 		}
 	});
@@ -160,31 +160,31 @@
 
 <Tabs.Root value="money">
 	<Tabs.List>
-		<Tabs.Trigger value="money">Account</Tabs.Trigger>
-		<Tabs.Trigger value="personal">Personal information</Tabs.Trigger>
+		<Tabs.Trigger value="money">Számla</Tabs.Trigger>
+		<Tabs.Trigger value="personal">Személyes adatok</Tabs.Trigger>
 	</Tabs.List>
 	<Tabs.Content value="money">
 		<!-- ── Money entry form ── -->
 		<form method="POST" action="?/createMoney" use:enhance={handleMoneySubmit()} class="mt-8">
 			<Card.Root>
 				<Card.Header>
-					<Card.Title>Add Money Entry</Card.Title>
+					<Card.Title>Pénzügyi tétel hozzáadása</Card.Title>
 				</Card.Header>
 				<Card.Content class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 					<!-- Type -->
 					<div class="flex flex-col gap-1.5">
-						<Label for="money_type">Type <span class="text-destructive">*</span></Label>
+						<Label for="money_type">Típus <span class="text-destructive">*</span></Label>
 						<select id="money_type" name="type" bind:value={moneyType} class={selectClass}>
-							<option value="deposit">Deposit</option>
-							<option value="withdraw">Withdraw</option>
-							<option value="interest">Interest</option>
+							<option value="deposit">Befizetés</option>
+							<option value="withdraw">Kivét</option>
+							<option value="interest">Kamat</option>
 						</select>
 						{#if moneyErrors.type}<p class="text-xs text-destructive">{moneyErrors.type}</p>{/if}
 					</div>
 
 					<!-- Value -->
 					<div class="flex flex-col gap-1.5">
-						<Label for="money_value">Value <span class="text-destructive">*</span></Label>
+						<Label for="money_value">Összeg <span class="text-destructive">*</span></Label>
 						<Input
 							id="money_value"
 							name="value"
@@ -200,7 +200,7 @@
 
 					<!-- End of Term -->
 					<div class="flex flex-col gap-1.5">
-						<Label for="money_startofterm">Start of Term</Label>
+						<Label for="money_startofterm">Futamidő kezdete</Label>
 						<Input
 							id="money_startofterm"
 							name="startofterm"
@@ -210,7 +210,7 @@
 					</div>
 
 					<div class="flex flex-col gap-1.5">
-						<Label for="money_endofterm">End of Term</Label>
+						<Label for="money_endofterm">Futamidő vége</Label>
 						<Input
 							id="money_endofterm"
 							name="endofterm"
@@ -223,10 +223,10 @@
 					{#if moneyType === 'withdraw' || moneyType === 'interest'}
 						<div class="flex flex-col gap-1.5">
 							<Label for="money_parent"
-								>{moneyType === 'interest' ? 'Linked Deposit' : 'Withdraw From (Deposit)'}</Label
+								>{moneyType === 'interest' ? 'Kapcsolódó befizetés' : 'Levonás forrása'}</Label
 							>
 							{#if deposits.length === 0}
-								<p class="text-sm text-muted-foreground">No deposits available.</p>
+								<p class="text-sm text-muted-foreground">Nincs elérhető befizetés.</p>
 							{:else}
 								<select
 									id="money_parent"
@@ -234,7 +234,7 @@
 									bind:value={selectedParentId}
 									class={selectClass}
 								>
-									<option value="">— select deposit —</option>
+									<option value="">— válasszon befizetést —</option>
 									{#each deposits as d}
 										{@const dep = d as {
 											id: string;
@@ -244,7 +244,7 @@
 										}}
 										<option value={dep.id} selected={moneyValues.parent === dep.id}>
 											{formatDate(dep.startofterm)} · {formatMoney(dep.value)}{dep.endofterm
-												? ` (until ${formatDate(dep.endofterm)})`
+												? ` (lejár: ${formatDate(dep.endofterm)})`
 												: ''}
 										</option>
 									{/each}
@@ -276,9 +276,9 @@
 									d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
 								></path>
 							</svg>
-							Adding…
+							Hozzáadás…
 						{:else}
-							Add Entry
+							Tétel hozzáadása
 						{/if}
 					</Button>
 				</Card.Footer>
@@ -287,26 +287,26 @@
 
 		<!-- ── Money entries list ── -->
 		<div class="mt-8">
-			<h2 class="mb-3 text-lg font-semibold">Money Entries</h2>
+			<h2 class="mb-3 text-lg font-semibold">Pénzügyi tételek</h2>
 
 			<!-- ── Summary ── -->
 			<div class="mt-4 mb-8 rounded-md border p-4">
-				<h3 class="mb-3 text-sm font-semibold">Summary</h3>
+				<h3 class="mb-3 text-sm font-semibold">Összesítő</h3>
 				<div class="grid grid-cols-2 gap-4 text-center sm:grid-cols-4">
 					<div>
-						<p class="text-xs text-muted-foreground">Total Deposits</p>
+						<p class="text-xs text-muted-foreground">Összes befizetés</p>
 						<p class="text-lg font-semibold text-green-700">{formatMoney(totalDeposits)}</p>
 					</div>
 					<div>
-						<p class="text-xs text-muted-foreground">Total Interest</p>
+						<p class="text-xs text-muted-foreground">Összes kamat</p>
 						<p class="text-lg font-semibold text-blue-700">{formatMoney(totalInterest)}</p>
 					</div>
 					<div>
-						<p class="text-xs text-muted-foreground">Total Withdrawals</p>
+						<p class="text-xs text-muted-foreground">Összes kivét</p>
 						<p class="text-lg font-semibold text-red-700">{formatMoney(totalWithdrawals)}</p>
 					</div>
 					<div>
-						<p class="text-xs text-muted-foreground">Net Balance</p>
+						<p class="text-xs text-muted-foreground">Nettó egyenleg</p>
 						<p class="text-lg font-semibold {netBalance >= 0 ? 'text-green-700' : 'text-red-700'}">
 							{formatMoney(netBalance)}
 						</p>
@@ -315,17 +315,17 @@
 			</div>
 
 			{#if data.moneyEntries.length === 0}
-				<p class="text-sm text-muted-foreground">No money entries yet.</p>
+				<p class="text-sm text-muted-foreground">Még nincsenek pénzügyi tételek.</p>
 			{:else}
 				<div class="overflow-x-auto rounded-md border">
 					<table class="w-full text-sm">
 						<thead>
 							<tr class="border-b bg-muted/50">
-								<th class="px-4 py-3 text-left font-medium">Type</th>
-								<th class="px-4 py-3 text-right font-medium">Value</th>
-								<th class="px-4 py-3 text-left font-medium">End of Term</th>
-								<th class="px-4 py-3 text-left font-medium">Parent Deposit</th>
-								<th class="px-4 py-3 text-left font-medium">Created</th>
+								<th class="px-4 py-3 text-left font-medium">Típus</th>
+								<th class="px-4 py-3 text-right font-medium">Összeg</th>
+								<th class="px-4 py-3 text-left font-medium">Futamidő vége</th>
+								<th class="px-4 py-3 text-left font-medium">Forrás befizetés</th>
+								<th class="px-4 py-3 text-left font-medium">Dátum</th>
 								<th class="px-4 py-3"></th>
 							</tr>
 						</thead>
@@ -346,17 +346,17 @@
 										{#if e.type === 'deposit'}
 											<span
 												class="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800"
-												>Deposit</span
+												>Befizetés</span
 											>
 										{:else if e.type === 'interest'}
 											<span
 												class="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800"
-												>Interest</span
+												>Kamat</span
 											>
 										{:else}
 											<span
 												class="inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800"
-												>Withdraw</span
+												>Kivét</span
 											>
 										{/if}
 									</td>
@@ -375,7 +375,7 @@
 											size="sm"
 											class="text-destructive hover:text-destructive"
 											onclick={() => (deleteTarget = { id: e.id, type: e.type, value: e.value })}
-											>Delete</Button
+											>Törlés</Button
 										>
 									</td>
 								</tr>
@@ -396,20 +396,20 @@
 	>
 		<Dialog.Content>
 			<Dialog.Header>
-				<Dialog.Title>Delete entry?</Dialog.Title>
+				<Dialog.Title>Töröljük a tételt?</Dialog.Title>
 				<Dialog.Description>
 					{#if deleteTarget}
-						You are about to permanently delete this
-						<strong>{deleteTarget.type}</strong> entry of
-						<strong>{formatMoney(deleteTarget.value)}</strong>. This cannot be undone.
+						Véglegesen törölni készül ezt a
+						<strong>{deleteTarget.type}</strong> típusú,
+						<strong>{formatMoney(deleteTarget.value)}</strong> összegű tételt. Ez nem vonható vissza.
 					{/if}
 				</Dialog.Description>
 			</Dialog.Header>
 			<Dialog.Footer>
-				<Button variant="outline" onclick={() => (deleteTarget = null)}>Cancel</Button>
+				<Button variant="outline" onclick={() => (deleteTarget = null)}>Mégse</Button>
 				<form method="POST" action="?/deleteMoney" use:enhance>
 					<input type="hidden" name="id" value={deleteTarget?.id} />
-					<Button type="submit" variant="destructive">Delete</Button>
+					<Button type="submit" variant="destructive">Törlés</Button>
 				</form>
 			</Dialog.Footer>
 		</Dialog.Content>
@@ -420,15 +420,15 @@
 		<form method="POST" action="?/updateClient" use:enhance={handleClientSubmit()}>
 			<Card.Root>
 				<Card.Header>
-					<Card.Title>Personal Information</Card.Title>
+					<Card.Title>Személyes adatok</Card.Title>
 				</Card.Header>
 				<Card.Content class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 					<div class="flex flex-col gap-1.5">
-						<Label for="name_first">First Name <span class="text-destructive">*</span></Label>
+						<Label for="name_first">Keresztnév <span class="text-destructive">*</span></Label>
 						<Input
 							id="name_first"
 							name="name_first"
-							placeholder="Jane"
+							placeholder="Mária"
 							value={clientValues.name_first ?? ''}
 							aria-invalid={!!clientErrors.name_first}
 						/>
@@ -437,11 +437,11 @@
 							</p>{/if}
 					</div>
 					<div class="flex flex-col gap-1.5">
-						<Label for="name_last">Last Name <span class="text-destructive">*</span></Label>
+						<Label for="name_last">Vezetéknév <span class="text-destructive">*</span></Label>
 						<Input
 							id="name_last"
 							name="name_last"
-							placeholder="Doe"
+							placeholder="Kovács"
 							value={clientValues.name_last ?? ''}
 							aria-invalid={!!clientErrors.name_last}
 						/>
@@ -450,7 +450,7 @@
 							</p>{/if}
 					</div>
 					<div class="flex flex-col gap-1.5">
-						<Label for="email">Email</Label>
+						<Label for="email">E-mail</Label>
 						<Input
 							id="email"
 							name="email"
@@ -464,7 +464,7 @@
 							</p>{/if}
 					</div>
 					<div class="flex flex-col gap-1.5">
-						<Label for="phone_number">Phone Number</Label>
+						<Label for="phone_number">Telefonszám</Label>
 						<Input
 							id="phone_number"
 							name="phone_number"
@@ -474,7 +474,7 @@
 						/>
 					</div>
 					<div class="flex flex-col gap-1.5">
-						<Label for="system_id">System ID</Label>
+						<Label for="system_id">Azonosító</Label>
 						<Input
 							id="system_id"
 							name="system_id"
@@ -488,7 +488,7 @@
 							</p>{/if}
 					</div>
 					<div class="flex flex-col gap-1.5">
-						<Label for="birth_date">Birth Date</Label>
+						<Label for="birth_date">Születési dátum</Label>
 						<Input
 							id="birth_date"
 							name="birth_date"
@@ -497,11 +497,11 @@
 						/>
 					</div>
 					<div class="col-span-full flex flex-col gap-1.5">
-						<Label for="birth_place">Birth Place</Label>
+						<Label for="birth_place">Születési hely</Label>
 						<Input
 							id="birth_place"
 							name="birth_place"
-							placeholder="City, Country"
+							placeholder="Város, Ország"
 							value={clientValues.birth_place ?? ''}
 						/>
 					</div>
@@ -509,41 +509,41 @@
 			</Card.Root>
 
 			<Card.Root class="mt-4">
-				<Card.Header><Card.Title>Address</Card.Title></Card.Header>
+				<Card.Header><Card.Title>Cím</Card.Title></Card.Header>
 				<Card.Content class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 					<div class="col-span-full flex flex-col gap-1.5">
-						<Label for="adress_street">Street</Label>
+						<Label for="adress_street">Utca</Label>
 						<Input
 							id="adress_street"
 							name="adress_street"
-							placeholder="123 Main St"
+							placeholder="Kossuth u. 1."
 							value={clientValues.adress_street ?? ''}
 						/>
 					</div>
 					<div class="flex flex-col gap-1.5">
-						<Label for="address_zip">ZIP / Postal Code</Label>
+						<Label for="address_zip">Irányítószám</Label>
 						<Input
 							id="address_zip"
 							name="address_zip"
-							placeholder="10001"
+							placeholder="1011"
 							value={clientValues.address_zip ?? ''}
 						/>
 					</div>
 					<div class="flex flex-col gap-1.5">
-						<Label for="address_city">City</Label>
+						<Label for="address_city">Város</Label>
 						<Input
 							id="address_city"
 							name="address_city"
-							placeholder="New York"
+							placeholder="Budapest"
 							value={clientValues.address_city ?? ''}
 						/>
 					</div>
 					<div class="col-span-full flex flex-col gap-1.5">
-						<Label for="address_country">Country</Label>
+						<Label for="address_country">Ország</Label>
 						<Input
 							id="address_country"
 							name="address_country"
-							placeholder="United States"
+							placeholder="Magyarország"
 							value={clientValues.address_country ?? ''}
 						/>
 					</div>
@@ -552,7 +552,7 @@
 
 			<div class="mt-4 flex items-center justify-end gap-3">
 				<Button type="button" variant="outline" onclick={() => goto('/dashboard/clients/list')}
-					>Back to List</Button
+					>Vissza a listához</Button
 				>
 				<Button type="submit" disabled={isClientLoading}>
 					{#if isClientLoading}
@@ -576,9 +576,9 @@
 								d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
 							></path>
 						</svg>
-						Saving…
+						Mentés…
 					{:else}
-						Save Client
+						Ügyfél mentése
 					{/if}
 				</Button>
 			</div>

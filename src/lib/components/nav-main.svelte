@@ -22,7 +22,7 @@
 </script>
 
 <Sidebar.Group>
-	<Sidebar.GroupLabel>Sania menu</Sidebar.GroupLabel>
+	<Sidebar.GroupLabel>Sania menü</Sidebar.GroupLabel>
 	<Sidebar.Menu>
 		{#each items as item (item.title)}
 			{#if item.items && item.items.length > 0}

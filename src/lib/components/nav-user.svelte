@@ -21,19 +21,19 @@
 <Sidebar.Menu>
 	<Sidebar.MenuButton onclick={() => (quitDialogOpen = true)}>
 		<LogOutIcon />
-		Logout
+		Kijelentkezés
 	</Sidebar.MenuButton>
 </Sidebar.Menu>
 
 <Dialog.Root bind:open={quitDialogOpen}>
 	<Dialog.Content>
 		<Dialog.Header>
-			<Dialog.Title>Are you sure?</Dialog.Title>
-			<Dialog.Description>Would you like to logout?</Dialog.Description>
+			<Dialog.Title>Biztosan?</Dialog.Title>
+			<Dialog.Description>Szeretne kijelentkezni?</Dialog.Description>
 		</Dialog.Header>
 		<Dialog.Footer>
-			<Button variant="outline" onclick={() => (quitDialogOpen = false)}>Cancel</Button>
-			<Button variant="destructive" onclick={() => goto('/logout')}>Logout</Button>
+			<Button variant="outline" onclick={() => (quitDialogOpen = false)}>Mégse</Button>
+			<Button variant="destructive" onclick={() => goto('/logout')}>Kijelentkezés</Button>
 		</Dialog.Footer>
 	</Dialog.Content>
 </Dialog.Root>

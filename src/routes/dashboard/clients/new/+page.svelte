@@ -34,7 +34,7 @@
 			}) => {
 				isLoading = false;
 				if (result.type === 'redirect') {
-					toast.success('Client created successfully!');
+					toast.success('Az ügyfél sikeresen létrehozva!');
 					await update();
 				} else {
 					await update();
@@ -58,23 +58,23 @@
 
 <div class="mx-auto max-w-4xl px-4 py-6">
 	<div class="mb-6">
-		<h1 class="text-2xl font-bold">New Client</h1>
-		<p class="text-sm text-muted-foreground">Fill in the details to create a new client.</p>
+		<h1 class="text-2xl font-bold">Új ügyfél</h1>
+		<p class="text-sm text-muted-foreground">Töltse ki az adatokat az új ügyfél létrehozásához.</p>
 	</div>
 
 	<form method="POST" use:enhance={handleSubmit()}>
 		<Card.Root>
 			<Card.Header>
-				<Card.Title>Personal Information</Card.Title>
+				<Card.Title>Személyes adatok</Card.Title>
 			</Card.Header>
 			<Card.Content class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 				<!-- First Name -->
 				<div class="flex flex-col gap-1.5">
-					<Label for="name_first">First Name <span class="text-destructive">*</span></Label>
+					<Label for="name_first">Keresztnév <span class="text-destructive">*</span></Label>
 					<Input
 						id="name_first"
 						name="name_first"
-						placeholder="Jane"
+						placeholder="Mária"
 						value={values.name_first ?? ''}
 						aria-invalid={!!errors.name_first}
 					/>
@@ -85,11 +85,11 @@
 
 				<!-- Last Name -->
 				<div class="flex flex-col gap-1.5">
-					<Label for="name_last">Last Name <span class="text-destructive">*</span></Label>
+					<Label for="name_last">Vezetéknév <span class="text-destructive">*</span></Label>
 					<Input
 						id="name_last"
 						name="name_last"
-						placeholder="Doe"
+						placeholder="Kovács"
 						value={values.name_last ?? ''}
 						aria-invalid={!!errors.name_last}
 					/>
@@ -100,7 +100,7 @@
 
 				<!-- Email -->
 				<div class="flex flex-col gap-1.5">
-					<Label for="email">Email</Label>
+					<Label for="email">E-mail</Label>
 					<Input
 						id="email"
 						name="email"
@@ -116,7 +116,7 @@
 
 				<!-- Phone -->
 				<div class="flex flex-col gap-1.5">
-					<Label for="phone_number">Phone Number</Label>
+					<Label for="phone_number">Telefonszám</Label>
 					<Input
 						id="phone_number"
 						name="phone_number"
@@ -128,24 +128,24 @@
 
 				<!-- System ID -->
 				<div class="flex flex-col gap-1.5">
-					<Label for="birth_place">Birth Place</Label>
+					<Label for="birth_place">Születési hely</Label>
 					<Input
 						id="birth_place"
 						name="birth_place"
-						placeholder="City, Country"
+						placeholder="Város, Ország"
 						value={values.birth_place ?? ''}
 					/>
 				</div>
 
 				<!-- Birth Date -->
 				<div class="flex flex-col gap-1.5">
-					<Label for="birth_date">Birth Date</Label>
+					<Label for="birth_date">Születési dátum</Label>
 					<Input id="birth_date" name="birth_date" type="date" value={values.birth_date ?? ''} />
 				</div>
 
 				<!-- Birth Place -->
 				<div class="flex flex-col gap-1.5">
-					<Label for="system_id">System ID</Label>
+					<Label for="system_id">Azonosító</Label>
 					<Input
 						id="system_id"
 						name="system_id"
@@ -160,7 +160,7 @@
 				</div>
 
 				<div class="flex flex-col gap-1.5">
-					<Label for="password">Password</Label>
+					<Label for="password">Jelszó</Label>
 					<Input
 						id="password"
 						name="password"
@@ -170,7 +170,7 @@
 						aria-invalid={!!errors.password}
 					/>
 					<Button variant="outline" type="button" onclick={() => (password = passwordGen())}>
-						Generate Password
+						Jelszó generálása
 					</Button>
 					{#if errors.password}
 						<p class="text-xs text-destructive">{errors.password}</p>
@@ -181,49 +181,49 @@
 
 		<Card.Root class="mt-4">
 			<Card.Header>
-				<Card.Title>Address</Card.Title>
+				<Card.Title>Cím</Card.Title>
 			</Card.Header>
 			<Card.Content class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 				<!-- Street -->
 				<div class="col-span-full flex flex-col gap-1.5">
-					<Label for="adress_street">Street</Label>
+					<Label for="adress_street">Utca</Label>
 					<Input
 						id="adress_street"
 						name="adress_street"
-						placeholder="123 Main St"
+						placeholder="Kossuth u. 1."
 						value={values.adress_street ?? ''}
 					/>
 				</div>
 
 				<!-- ZIP -->
 				<div class="flex flex-col gap-1.5">
-					<Label for="address_zip">ZIP / Postal Code</Label>
+					<Label for="address_zip">Irányítószám</Label>
 					<Input
 						id="address_zip"
 						name="address_zip"
-						placeholder="10001"
+						placeholder="1011"
 						value={values.address_zip ?? ''}
 					/>
 				</div>
 
 				<!-- City -->
 				<div class="flex flex-col gap-1.5">
-					<Label for="address_city">City</Label>
+					<Label for="address_city">Város</Label>
 					<Input
 						id="address_city"
 						name="address_city"
-						placeholder="New York"
+						placeholder="Budapest"
 						value={values.address_city ?? ''}
 					/>
 				</div>
 
 				<!-- Country -->
 				<div class="col-span-full flex flex-col gap-1.5">
-					<Label for="address_country">Country</Label>
+					<Label for="address_country">Ország</Label>
 					<Input
 						id="address_country"
 						name="address_country"
-						placeholder="United States"
+						placeholder="Magyarország"
 						value={values.address_country ?? ''}
 					/>
 				</div>
@@ -232,7 +232,7 @@
 
 		<div class="mt-6 flex items-center justify-end gap-3">
 			<Button type="button" variant="outline" onclick={() => goto('/dashboard/clients')}>
-				Cancel
+				Mégse
 			</Button>
 			<Button type="submit" disabled={isLoading}>
 				{#if isLoading}
@@ -250,9 +250,9 @@
 							d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
 						></path>
 					</svg>
-					Saving…
+					Mentés…
 				{:else}
-					Save Client
+					Ügyfél mentése
 				{/if}
 			</Button>
 		</div>

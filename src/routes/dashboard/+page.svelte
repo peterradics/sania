@@ -17,8 +17,8 @@
 <div class="space-y-8">
 	<!-- ── Summary header ── -->
 	<div>
-		<h1 class="text-2xl font-bold">Dashboard</h1>
-		<p class="text-sm text-muted-foreground">Platform-wide overview</p>
+		<h1 class="text-2xl font-bold">Irányítópult</h1>
+		<p class="text-sm text-muted-foreground">Platform összesítő</p>
 	</div>
 
 	<div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -29,7 +29,7 @@
 					<WalletIcon class="h-5 w-5 text-primary" />
 				</div>
 				<div>
-					<p class="text-xs tracking-wide text-muted-foreground uppercase">Total Balance</p>
+					<p class="text-xs tracking-wide text-muted-foreground uppercase">Összes kezelt vagyon</p>
 					<p
 						class="text-2xl font-semibold tabular-nums {data.totalBalance >= 0
 							? 'text-green-700'
@@ -48,7 +48,7 @@
 					<ArrowDownToLineIcon class="h-5 w-5 text-green-700" />
 				</div>
 				<div>
-					<p class="text-xs tracking-wide text-muted-foreground uppercase">Total Deposits</p>
+					<p class="text-xs tracking-wide text-muted-foreground uppercase">Összes befizetés</p>
 					<p class="text-2xl font-semibold text-green-700 tabular-nums">
 						{formatMoney(data.totalDeposits)} EUR
 					</p>
@@ -63,7 +63,7 @@
 					<SparklesIcon class="h-5 w-5 text-blue-700" />
 				</div>
 				<div>
-					<p class="text-xs tracking-wide text-muted-foreground uppercase">Total Interest</p>
+					<p class="text-xs tracking-wide text-muted-foreground uppercase">Összes kamat</p>
 					<p class="text-2xl font-semibold text-blue-700 tabular-nums">
 						{formatMoney(data.totalInterest)}
 					</p>
@@ -79,8 +79,8 @@
 				<UsersIcon class="h-4 w-4 text-primary" />
 			</div>
 			<div>
-				<Card.Title>Latest Clients</Card.Title>
-				<Card.Description>Most recently added accounts</Card.Description>
+				<Card.Title>Legújabb ügyfelek</Card.Title>
+				<Card.Description>Legutóbb hozzáadott fiókok</Card.Description>
 			</div>
 		</Card.Header>
 		<Card.Content class="p-0">
@@ -88,9 +88,9 @@
 				<table class="w-full text-sm">
 					<thead>
 						<tr class="border-b bg-muted/50">
-							<th class="px-6 py-3 text-left font-medium text-muted-foreground">System ID</th>
-							<th class="px-6 py-3 text-left font-medium text-muted-foreground">Name</th>
-							<th class="px-6 py-3 text-right font-medium text-muted-foreground">Balance</th>
+							<th class="px-6 py-3 text-left font-medium text-muted-foreground">Azonosító</th>
+							<th class="px-6 py-3 text-left font-medium text-muted-foreground">Név</th>
+							<th class="px-6 py-3 text-right font-medium text-muted-foreground">Egyenleg</th>
 						</tr>
 					</thead>
 					<tbody>

@@ -12,27 +12,27 @@
 
 <Card.Root class="mx-auto w-full max-w-sm">
 	<Card.Header>
-		<Card.Title class="text-2xl">Login</Card.Title>
-		<Card.Description>Enter your email below to login to your account</Card.Description>
+		<Card.Title class="text-2xl">Bejelentkezés</Card.Title>
+		<Card.Description>Adja meg e-mail címét a bejelentkezéshez</Card.Description>
 	</Card.Header>
 	<Card.Content>
 		<form method="POST" use:enhance>
 			<FieldGroup>
 				{#if form?.error}
-					<p class="text-destructive text-sm">{form.error}</p>
+					<p class="text-sm text-destructive">{form.error}</p>
 				{/if}
 				<Field>
-					<FieldLabel for="email-{id}">Email</FieldLabel>
+					<FieldLabel for="email-{id}">E-mail</FieldLabel>
 					<Input id="email-{id}" name="email" type="email" placeholder="m@example.com" required />
 				</Field>
 				<Field>
 					<div class="flex items-center">
-						<FieldLabel for="password-{id}">Password</FieldLabel>
+						<FieldLabel for="password-{id}">Jelszó</FieldLabel>
 					</div>
 					<Input id="password-{id}" name="password" type="password" required />
 				</Field>
 				<Field>
-					<Button type="submit" class="w-full">Login</Button>
+					<Button type="submit" class="w-full">Bejelentkezés</Button>
 				</Field>
 			</FieldGroup>
 		</form>
