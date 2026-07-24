@@ -1,13 +1,6 @@
 <script lang="ts" module>
-	import ChartPieIcon from '@lucide/svelte/icons/chart-pie';
-
-	import FrameIcon from '@lucide/svelte/icons/frame';
-
-	import MapIcon from '@lucide/svelte/icons/map';
-	import Settings2Icon from '@lucide/svelte/icons/settings-2';
 	import ClientsIcon from '@lucide/svelte/icons/users';
 	import DashboardIcon from '@lucide/svelte/icons/layout-dashboard';
-	import PortfoliosIcon from '@lucide/svelte/icons/chart-bar';
 
 	// This is sample data.
 	const data = {
