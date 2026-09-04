@@ -176,6 +176,23 @@
 						<p class="text-xs text-destructive">{errors.password}</p>
 					{/if}
 				</div>
+
+				<!-- Annual Return Percent -->
+				<div class="flex flex-col gap-1.5">
+					<Label for="annual_return_percent">Éves hozam (%)</Label>
+					<Input
+						id="annual_return_percent"
+						name="annual_return_percent"
+						type="number"
+						step="0.01"
+						placeholder="9"
+						value={values.annual_return_percent ?? '9'}
+						aria-invalid={!!errors.annual_return_percent}
+					/>
+					{#if errors.annual_return_percent}
+						<p class="text-xs text-destructive">{errors.annual_return_percent}</p>
+					{/if}
+				</div>
 			</Card.Content>
 		</Card.Root>
 

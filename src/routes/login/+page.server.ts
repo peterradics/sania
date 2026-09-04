@@ -12,14 +12,12 @@ export const actions: Actions = {
 		try {
 			const auth = await pb.collection('_superusers').authWithPassword(email, password);
 
-			console.log(auth);
-
 			cookies.set('pb_auth', JSON.stringify({ token: auth.token, record: auth.record }), {
 				path: '/',
 				httpOnly: true,
 				sameSite: 'strict',
 				secure: process.env.NODE_ENV === 'production',
-				maxAge: 60 * 60 * 24 * 1 // 1 day
+				maxAge: 60 * 60 * 24 * 1
 			});
 		} catch {
 			return fail(400, { error: 'Invalid email or password' });

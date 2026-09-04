@@ -1,12 +1,21 @@
 import { fail } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 
-type Client = { id: string; name_first: string; name_last: string };
+type Client = {
+	id: string;
+	name_first: string;
+	name_last: string;
+	annual_return_percent: number | null;
+};
 type Deposit = { id: string; client: string; value: number; startofterm: string };
+
+const DEFAULT_ANNUAL_RETURN_PERCENT = 9;
 
 async function loadRows(locals: App.Locals) {
 	const [clients, deposits] = await Promise.all([
-		locals.pb.collection('clients').getFullList({ fields: 'id,name_first,name_last' }),
+		locals.pb
+			.collection('clients')
+			.getFullList({ fields: 'id,name_first,name_last,annual_return_percent' }),
 		locals.pb.collection('money').getFullList({
 			filter: "type = 'deposit'",
 			fields: 'id,client,value,startofterm',
@@ -20,13 +29,15 @@ async function loadRows(locals: App.Locals) {
 		.filter((d) => d.client && clientsById.has(d.client))
 		.map((d) => {
 			const client = clientsById.get(d.client)!;
-			const interest = Math.round(((d.value * 0.09) / 12) * 100) / 100;
+			const annualReturnPercent = client.annual_return_percent ?? DEFAULT_ANNUAL_RETURN_PERCENT;
+			const interest = Math.round(((d.value * (annualReturnPercent / 100)) / 12) * 100) / 100;
 			return {
 				depositId: d.id,
 				clientId: d.client,
 				clientName: `${client.name_first} ${client.name_last}`,
 				depositValue: d.value,
 				depositStartofterm: d.startofterm,
+				annualReturnPercent,
 				interestValue: interest
 			};
 		});

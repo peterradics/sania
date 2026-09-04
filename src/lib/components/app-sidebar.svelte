@@ -1,6 +1,7 @@
 <script lang="ts" module>
 	import ClientsIcon from '@lucide/svelte/icons/users';
-	import DashboardIcon from '@lucide/svelte/icons/layout-dashboard';
+		import DashboardIcon from '@lucide/svelte/icons/layout-dashboard';
+		import DownloadIcon from '@lucide/svelte/icons/download';
 
 	// This is sample data.
 	const data = {
@@ -17,7 +18,8 @@
 				isActive: true,
 				items: [
 					{ title: 'Főoldal', url: '/dashboard' },
-					{ title: 'Elszámolás', url: '/dashboard/calculation' }
+					{ title: 'Elszámolás', url: '/dashboard/calculation' },
+					{ title: 'Napló', url: '/dashboard/log' }
 				]
 			},
 			{
@@ -35,6 +37,11 @@
 						url: '/dashboard/clients/list'
 					}
 				]
+			},
+			{
+				title: 'Export',
+				url: '/dashboard/export',
+				icon: DownloadIcon
 			}
 			/*	{
 				title: 'Portfolios',

@@ -8,6 +8,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
+	import { passwordGen } from '$lib/utils.js';
 	import type { PageData } from './$types';
 
 	let { data, form }: { data: PageData; form: Record<string, unknown> | null } = $props();
@@ -15,9 +16,11 @@
 	console.log(data.moneyEntries);
 	let isClientLoading = $state(false);
 	let isMoneyLoading = $state(false);
+	let isPasswordLoading = $state(false);
 	let moneyType = $state('deposit');
 	let selectedParentId = $state('');
 	let deleteTarget = $state<{ id: string; type: string; value: number } | null>(null);
+	let newPassword = $state(passwordGen());
 
 	$effect(() => {
 		if (moneyType !== 'withdraw' && moneyType !== 'interest') selectedParentId = '';
@@ -40,6 +43,14 @@
 				toast.success('Tétel törölve.');
 			}
 		}
+		if (form._action === 'updatePassword') {
+			if (form.passwordServerError) toast.error(form.passwordServerError as string);
+			if (form.passwordError) toast.error(form.passwordError as string);
+			if (form.success) {
+				toast.success('A jelszó sikeresen módosítva!');
+				newPassword = passwordGen();
+			}
+		}
 	});
 
 	function handleClientSubmit() {
@@ -47,6 +58,16 @@
 			isClientLoading = true;
 			return async ({ update }: { update: (opts?: { reset: boolean }) => Promise<void> }) => {
 				isClientLoading = false;
+				await update({ reset: false });
+			};
+		};
+	}
+
+	function handlePasswordSubmit() {
+		return () => {
+			isPasswordLoading = true;
+			return async ({ update }: { update: (opts?: { reset: boolean }) => Promise<void> }) => {
+				isPasswordLoading = false;
 				await update({ reset: false });
 			};
 		};
@@ -88,7 +109,9 @@
 			address_city: c.address_city ?? '',
 			address_country: c.address_country ?? '',
 			birth_place: c.birth_place ?? '',
-			birth_date: c.birth_date ? c.birth_date.split(' ')[0] : ''
+			birth_date: c.birth_date ? c.birth_date.split(' ')[0] : '',
+			annual_return_percent:
+				c.annual_return_percent != null ? String(c.annual_return_percent) : '9'
 		};
 	});
 
@@ -116,7 +139,8 @@
 		if (moneyType !== 'interest' || !selectedParentId) return '';
 		const dep = depositsById.get(selectedParentId) as { value: number } | undefined;
 		if (!dep) return '';
-		return (Math.round(((dep.value * 0.09) / 12) * 100) / 100).toFixed(2);
+		const rate = (Number(data.client.annual_return_percent) || 9) / 100;
+		return (Math.round(((dep.value * rate) / 12) * 100) / 100).toFixed(2);
 	});
 
 	const totalDeposits = $derived(
@@ -505,6 +529,21 @@
 							value={clientValues.birth_place ?? ''}
 						/>
 					</div>
+					<div class="flex flex-col gap-1.5">
+						<Label for="annual_return_percent">Éves hozam (%)</Label>
+						<Input
+							id="annual_return_percent"
+							name="annual_return_percent"
+							type="number"
+							step="0.01"
+							placeholder="9"
+							value={clientValues.annual_return_percent ?? '9'}
+							aria-invalid={!!clientErrors.annual_return_percent}
+						/>
+						{#if clientErrors.annual_return_percent}<p class="text-xs text-destructive">
+								{clientErrors.annual_return_percent}
+							</p>{/if}
+					</div>
 				</Card.Content>
 			</Card.Root>
 
@@ -582,6 +621,64 @@
 					{/if}
 				</Button>
 			</div>
+		</form>
+
+		<!-- ── Password form ── -->
+		<form
+			method="POST"
+			action="?/updatePassword"
+			use:enhance={handlePasswordSubmit()}
+			class="mt-4"
+		>
+			<Card.Root>
+				<Card.Header>
+					<Card.Title>Jelszó módosítása</Card.Title>
+				</Card.Header>
+				<Card.Content class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+					<div class="flex flex-col gap-1.5">
+						<Label for="password">Új jelszó</Label>
+						<Input
+							id="password"
+							name="password"
+							type="text"
+							placeholder="Password"
+							bind:value={newPassword}
+						/>
+						<Button variant="outline" type="button" onclick={() => (newPassword = passwordGen())}>
+							Jelszó generálása
+						</Button>
+					</div>
+				</Card.Content>
+				<Card.Footer class="justify-end">
+					<Button type="submit" disabled={isPasswordLoading}>
+						{#if isPasswordLoading}
+							<svg
+								class="mr-2 h-4 w-4 animate-spin"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+							>
+								<circle
+									class="opacity-25"
+									cx="12"
+									cy="12"
+									r="10"
+									stroke="currentColor"
+									stroke-width="4"
+								></circle>
+								<path
+									class="opacity-75"
+									fill="currentColor"
+									d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+								></path>
+							</svg>
+							Mentés…
+						{:else}
+							Jelszó mentése
+						{/if}
+					</Button>
+				</Card.Footer>
+			</Card.Root>
 		</form>
 	</Tabs.Content>
 </Tabs.Root>

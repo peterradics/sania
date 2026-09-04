@@ -17,7 +17,12 @@ const clientSchema = z.object({
 	address_city: z.string().optional(),
 	address_country: z.string().optional(),
 	birth_place: z.string().optional(),
-	birth_date: z.string().optional()
+	birth_date: z.string().optional(),
+	annual_return_percent: z
+		.string()
+		.optional()
+		.transform((v) => (v ? Number(v) : 9))
+		.pipe(z.number())
 });
 
 const moneySchema = z.object({
@@ -63,7 +68,8 @@ export const actions: Actions = {
 			address_city: formData.get('address_city') as string,
 			address_country: formData.get('address_country') as string,
 			birth_place: formData.get('birth_place') as string,
-			birth_date: formData.get('birth_date') as string
+			birth_date: formData.get('birth_date') as string,
+			annual_return_percent: formData.get('annual_return_percent') as string
 		};
 
 		const result = clientSchema.safeParse(raw);
@@ -95,6 +101,32 @@ export const actions: Actions = {
 		}
 
 		return { _action: 'updateClient' as const, success: true, values: raw };
+	},
+
+	updatePassword: async ({ params, request, locals }) => {
+		const formData = await request.formData();
+		const password = formData.get('password') as string;
+
+		if (!password || password.length < 8) {
+			return fail(422, {
+				_action: 'updatePassword',
+				passwordError: 'A jelszónak legalább 8 karakter hosszúnak kell lennie.'
+			});
+		}
+
+		try {
+			const user = await locals.pb.collection('users').getFirstListItem(`client = "${params.id}"`);
+			await locals.pb.collection('users').update(user.id, {
+				password,
+				passwordConfirm: password
+			});
+		} catch (err: unknown) {
+			const message =
+				err instanceof Error ? err.message : 'Failed to update password. Please try again.';
+			return fail(500, { _action: 'updatePassword', passwordServerError: message });
+		}
+
+		return { _action: 'updatePassword' as const, success: true };
 	},
 
 	deleteMoney: async ({ request, locals }) => {

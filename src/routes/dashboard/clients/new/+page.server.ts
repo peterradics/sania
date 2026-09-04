@@ -29,7 +29,12 @@ const clientSchema = z.object({
 	address_city: z.string().optional(),
 	address_country: z.string().optional(),
 	birth_place: z.string().optional(),
-	birth_date: z.string().optional()
+	birth_date: z.string().optional(),
+	annual_return_percent: z
+		.string()
+		.optional()
+		.transform((v) => (v ? Number(v) : 9))
+		.pipe(z.number())
 });
 
 export const actions: Actions = {
@@ -48,6 +53,7 @@ export const actions: Actions = {
 			address_country: formData.get('address_country') as string,
 			birth_place: formData.get('birth_place') as string,
 			birth_date: formData.get('birth_date') as string,
+			annual_return_percent: formData.get('annual_return_percent') as string,
 			password: formData.get('password') as string
 		};
 

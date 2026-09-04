@@ -54,7 +54,8 @@
 			<Card.Header>
 				<Card.Title>Kamat számítás</Card.Title>
 				<Card.Description>
-					Az alábbi táblázat minden aktív befizetés havi kamatát mutatja (évi 9% / 12).
+					Az alábbi táblázat minden aktív befizetés havi kamatát mutatja az ügyfél egyéni éves
+					hozama alapján (éves hozam / 12).
 				</Card.Description>
 			</Card.Header>
 			<Card.Content class="space-y-6">
@@ -114,8 +115,9 @@
 									<th class="px-4 py-3 text-right font-medium text-muted-foreground"
 										>Befizetés összege</th
 									>
+									<th class="px-4 py-3 text-right font-medium text-muted-foreground">Éves hozam</th>
 									<th class="px-4 py-3 text-right font-medium text-muted-foreground"
-										>Havi kamat (9% / 12)</th
+										>Havi kamat</th
 									>
 								</tr>
 							</thead>
@@ -129,6 +131,9 @@
 										<td class="px-4 py-3 text-right text-green-700 tabular-nums">
 											{formatMoney(row.depositValue)}
 										</td>
+										<td class="px-4 py-3 text-right text-muted-foreground tabular-nums">
+											{row.annualReturnPercent}%
+										</td>
 										<td class="px-4 py-3 text-right font-medium text-blue-700 tabular-nums">
 											{formatMoney(row.interestValue)}
 										</td>
@@ -141,6 +146,7 @@
 									<td class="px-4 py-3 text-right font-semibold text-green-700 tabular-nums">
 										{formatMoney(totalDeposits)}
 									</td>
+									<td class="px-4 py-3"></td>
 									<td class="px-4 py-3 text-right font-semibold text-blue-700 tabular-nums">
 										{formatMoney(totalInterest)}
 									</td>
